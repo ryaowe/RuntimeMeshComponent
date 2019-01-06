@@ -125,7 +125,7 @@ void FRuntimeMeshComponentSceneProxy::CreateMeshBatch(FMeshBatch& MeshBatch, con
 	FMeshBatchElement& BatchElement = MeshBatch.Elements[0];
 
 	MeshBatch.LODIndex = LODIndex;
-#if !((UE_BUILD_SHIPPING || UE_BUILD_TEST) || WITH_EDITOR)
+#if RUNTIMEMESH_ENABLE_DEBUG_RENDERING
 	MeshBatch.VisualizeLODIndex = LODIndex;
 #endif
 
@@ -170,6 +170,27 @@ void FRuntimeMeshComponentSceneProxy::DrawStaticElements(FStaticPrimitiveDrawInt
 			}
 		}
 	}
+}
+
+int32 FRuntimeMeshComponentSceneProxy::GetLOD(const FSceneView * View) const
+{
+	//return 1;
+	const FBoxSphereBounds& ProxyBounds = GetBounds();
+	FVector4 Origin = ProxyBounds.Origin;
+	float SphereRadius = ProxyBounds.SphereRadius, FactorScale = 1.0f;
+	int32 MinLOD = 0;
+	const int32 NumLODs = RUNTIMEMESH_MAXLODS;
+	const FSceneView& LODView = GetLODView(*View);
+	const float ScreenRadiusSquared = ComputeBoundsScreenRadiusSquared(Origin, SphereRadius, LODView) * FactorScale * FactorScale * LODView.LODDistanceFactor * LODView.LODDistanceFactor;
+	// Walk backwards and return the first matching LOD
+	for (int32 LODIndex = NumLODs - 1; LODIndex >= 0; --LODIndex)
+	{
+		if (FMath::Square(RuntimeMeshProxy->GetScreenSize(LODIndex) /* * 0.5f*/) > ScreenRadiusSquared)
+		{
+			return FMath::Max(LODIndex, MinLOD);
+		}
+	}
+	return MinLOD;
 }
 
 void FRuntimeMeshComponentSceneProxy::GetDynamicMeshElements(const TArray<const FSceneView*>& Views, const FSceneViewFamily& ViewFamily, uint32 VisibilityMap, FMeshElementCollector& Collector) const
@@ -228,7 +249,7 @@ void FRuntimeMeshComponentSceneProxy::GetDynamicMeshElements(const TArray<const 
 	}
 
 	// Draw bounds
-#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+#if RUNTIMEMESH_ENABLE_DEBUG_RENDERING
 	for (int32 ViewIndex = 0; ViewIndex < Views.Num(); ViewIndex++)
 	{
 		if (VisibilityMap & (1 << ViewIndex))
@@ -245,4 +266,5 @@ void FRuntimeMeshComponentSceneProxy::GetDynamicMeshElements(const TArray<const 
 		}
 	}
 #endif
+
 }

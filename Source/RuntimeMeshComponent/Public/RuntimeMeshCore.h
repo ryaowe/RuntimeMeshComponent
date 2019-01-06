@@ -15,7 +15,7 @@ DECLARE_STATS_GROUP(TEXT("RuntimeMesh"), STATGROUP_RuntimeMesh, STATCAT_Advanced
 #define RUNTIMEMESH_MAXTEXCOORDS MAX_TEXCOORDS
 #define RUNTIMEMESH_MAXLODS MAX_STATIC_MESH_LODS
 
-
+#define RUNTIMEMESH_ENABLE_DEBUG_RENDERING (!(UE_BUILD_SHIPPING || UE_BUILD_TEST) || WITH_EDITOR)
 
 // Custom version for runtime mesh serialization
 namespace FRuntimeMeshVersion

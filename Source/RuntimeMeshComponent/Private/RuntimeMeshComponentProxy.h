@@ -35,7 +35,7 @@ private:
 
 public:
 
-	/*Constructor, copies the whole mesh data to fed to UE */
+	/*Constructor, copies the whole mesh data to feed to UE */
 	FRuntimeMeshComponentSceneProxy(URuntimeMeshComponent* Component);
 
 	virtual ~FRuntimeMeshComponentSceneProxy();
@@ -53,6 +53,8 @@ public:
 	void CreateMeshBatch(FMeshBatch& MeshBatch, const FRuntimeMeshSectionProxyPtr& Section, int32 LODIndex, const FRuntimeMeshSectionRenderData& RenderData, FMaterialRenderProxy* Material, FMaterialRenderProxy* WireframeMaterial) const;
 
 	virtual void DrawStaticElements(FStaticPrimitiveDrawInterface* PDI) override;
+
+	virtual int32 GetLOD(const FSceneView* View) const override;
 
 	/* This is called by the engine to extract the mesh data that was stored inside */
 	virtual void GetDynamicMeshElements(const TArray<const FSceneView*>& Views, const FSceneViewFamily& ViewFamily, uint32 VisibilityMap, FMeshElementCollector& Collector) const override;
