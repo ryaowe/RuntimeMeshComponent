@@ -86,6 +86,8 @@ class RUNTIMEMESHCOMPONENT_API FRuntimeMeshData : public TSharedFromThis<FRuntim
 	FRuntimeMeshProxyPtr RenderProxy;
 
 	TUniquePtr<FRuntimeMeshLockProvider> SyncRoot;
+
+	int32 LODForCollision = 0;
 	
 public:
 
@@ -134,6 +136,9 @@ public:
 
 	void SetLODScreenSize(int32 LODIndex, float MinScreenSize);
 
+	void SetLODForCollision(int32 LODIndex);
+
+	int32 GetLODForCollision();
 
 	void CreateMeshSection(int32 SectionIndex, bool bWantsHighPrecisionTangents, bool bWantsHighPrecisionUVs, int32 NumUVs, bool bWants32BitIndices, bool bCreateCollision, EUpdateFrequency UpdateFrequency = EUpdateFrequency::Average);
 	

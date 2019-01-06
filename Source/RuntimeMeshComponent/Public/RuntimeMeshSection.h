@@ -574,7 +574,7 @@ public:
 	void UpdateBoundingBox();
 	void SetBoundingBox(const FBox& InBoundingBox) { LocalBoundingBox = InBoundingBox; }
 
-	int32 GetCollisionData(TArray<FVector>& OutPositions, TArray<FTriIndices>& OutIndices, TArray<FVector2D>& OutUVs);
+	int32 GetCollisionData(int32 LODIndex, TArray<FVector>& OutPositions, TArray<FTriIndices>& OutIndices, TArray<FVector2D>& OutUVs);
 
 
 	bool CheckTangentBuffer(bool bInUseHighPrecision) const

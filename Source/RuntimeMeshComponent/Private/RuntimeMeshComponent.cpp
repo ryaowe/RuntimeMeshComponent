@@ -109,6 +109,11 @@ void URuntimeMeshComponent::SendSectionPropertiesUpdate(int32 SectionIndex)
 	MarkRenderStateDirty();
 }
 
+void URuntimeMeshComponent::SetLODScreenSize_Blueprint(int32 LODIndex, float MinScreenSize)
+{
+	GetOrCreateRuntimeMeshData()->SetLODScreenSize(LODIndex, MinScreenSize);
+}
+
 FBoxSphereBounds URuntimeMeshComponent::CalcBounds(const FTransform& LocalToWorld) const
 {
 	if (GetRuntimeMesh())

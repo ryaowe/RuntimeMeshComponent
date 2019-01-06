@@ -216,11 +216,11 @@ void FRuntimeMeshSection::UpdateBoundingBox()
 	LocalBoundingBox = NewBoundingBox;
 }
 
-int32 FRuntimeMeshSection::GetCollisionData(TArray<FVector>& OutPositions, TArray<FTriIndices>& OutIndices, TArray<FVector2D>& OutUVs)
+int32 FRuntimeMeshSection::GetCollisionData(int32 LODIndex, TArray<FVector>& OutPositions, TArray<FTriIndices>& OutIndices, TArray<FVector2D>& OutUVs)
 { 
  	int32 StartVertexPosition = OutPositions.Num();
 
-	FRuntimeMeshSectionLODData& LODData = LODs[0];
+	FRuntimeMeshSectionLODData& LODData = LODs[FMath::Clamp(LODIndex, 0, LODs.Num()-1)];
 
 	OutPositions.Append(reinterpret_cast<FVector*>(LODData.PositionBuffer.GetData().GetData()), LODData.PositionBuffer.GetNumVertices());
   

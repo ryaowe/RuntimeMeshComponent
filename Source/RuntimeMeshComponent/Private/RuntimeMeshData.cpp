@@ -1399,7 +1399,6 @@ bool FRuntimeMeshData::GetPhysicsTriMeshData(struct FTriMeshCollisionData* Colli
 		if (MeshSections[SectionId].IsValid() && MeshSections[SectionId]->IsCollisionEnabled())
 		{
 			TArray<FVector2D> UVs;
-			int32 NumTriangles = MeshSections[SectionId]->GetCollisionData(CollisionData->Vertices, CollisionData->Indices, UVs);
 			int32 NumTriangles = MeshSections[SectionId]->GetCollisionData(LODForCollision, CollisionData->Vertices, CollisionData->Indices, UVs);
 
 			if (bCopyUVs)

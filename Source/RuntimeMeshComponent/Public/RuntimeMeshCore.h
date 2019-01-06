@@ -180,7 +180,7 @@ enum class ERuntimeMeshCollisionCookingMode : uint8
 USTRUCT(BlueprintType)
 struct FRuntimeMeshTangent
 {
-	GENERATED_USTRUCT_BODY()
+	GENERATED_BODY()
 
 	/** Direction of X tangent for this vertex */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Tangent)
