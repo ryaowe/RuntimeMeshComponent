@@ -10,6 +10,14 @@
 #include "RuntimeMesh.h"
 #include "RuntimeMeshComponent.generated.h"
 
+UENUM(BlueprintType)		//"BlueprintType" is essential to include
+enum class ERuntimeMeshSetAction : uint8
+{
+	Create 	UMETA(DisplayName = "Created new section"),
+	Update 	UMETA(DisplayName = "Updated section"),
+	Remove	UMETA(DisplayName = "Removed section"),
+	None	UMETA(DisplayName = "Did nothing")
+};
 /**
 *	Component that allows you to specify custom triangle mesh geometry for rendering and collision.
 */
@@ -46,6 +54,16 @@ public:
 		EnsureHasRuntimeMesh();
 
 		return RuntimeMeshReference;
+	}
+
+	FORCEINLINE FRuntimeMeshDataRef GetRuntimeMeshData()
+	{
+		return GetRuntimeMesh() ? GetRuntimeMesh()->GetRuntimeMeshData() : FRuntimeMeshDataRef();
+	}
+
+	FORCEINLINE FRuntimeMeshDataRef GetOrCreateRuntimeMeshData()
+	{
+		return GetOrCreateRuntimeMesh()->GetRuntimeMeshData();
 	}
 
 	UFUNCTION(BlueprintCallable, Category = "Components|RuntimeMesh")
@@ -444,6 +462,8 @@ public:
 	}
 
 
+	UFUNCTION(BlueprintCallable, Category = "Components|RuntimeMesh", meta = (DisplayName = "Set LOD screen size"))
+	void SetLODScreenSize_Blueprint(int32 LODIndex = 0, float MinScreenSize = 0.0f);
 
 	UFUNCTION(BlueprintCallable, Category = "Components|RuntimeMesh")
 	void SetSectionMaterial(int32 SectionId, UMaterialInterface* Material)
@@ -766,6 +786,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Components|RuntimeMesh")
 	int32 GetSectionIdFromCollisionFaceIndex(int32 FaceIndex) const;
 
+	UFUNCTION(BlueprintCallable, Category = "Components|RuntimeMesh")
+	void GetSectionIdAndFaceIdFromCollisionFaceIndex(int32 FaceIndex, int32& SectionIndex, int32& SectionFaceIndex) const;
+
 	virtual UMaterialInterface* GetMaterialFromCollisionFaceIndex(int32 FaceIndex, int32& SectionIndex) const override;
 	//~ End UPrimitiveComponent Interface.
 
@@ -807,10 +830,12 @@ private:
 	TArray<UBodySetup*> AsyncBodySetupQueue;
 
 	//~ Begin Interface_CollisionDataProvider Interface
+#if ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION < 22
 	virtual bool GetPhysicsTriMeshData(struct FTriMeshCollisionData* CollisionData, bool InUseAllTriData) override;
 	virtual bool ContainsPhysicsTriMeshData(bool InUseAllTriData) const override;
 	virtual bool WantsNegXTriMesh() override { return false; }
 	//~ End Interface_CollisionDataProvider Interface
+#endif
 
 #if ENGINE_MAJOR_VERSION == 4 && ENGINE_MINOR_VERSION < 21
 	UBodySetup* CreateNewBodySetup();

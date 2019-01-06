@@ -76,13 +76,56 @@ FPrimitiveViewRelevance FRuntimeMeshComponentSceneProxy::GetViewRelevance(const 
 
 void FRuntimeMeshComponentSceneProxy::CreateMeshBatch(FMeshBatch& MeshBatch, const FRuntimeMeshSectionProxyPtr& Section, int32 LODIndex, const FRuntimeMeshSectionRenderData& RenderData, FMaterialRenderProxy* Material, FMaterialRenderProxy* WireframeMaterial) const
 {
+	/* Needs to be set :
+		bWireframe
+		bRequiresAdjacencyInformation
+		MeshBatch :
+			MaterialRenderProxy
+			+VertexFactory
+			LCI								(Opt)
+			+LODIndex
+			+VisualizeLODIndex
+			VisualizeHLODIndex				(Opt)
+			+ReverseCulling					(Opt)
+			CastShadow
+			DepthPriorityGroup
+			bDitheredLODTransition
+			VertexFactory					(If override vertex color)
+		BatchElement:
+			VertexFactoryUserData
+			UserData						(If override vertex color)
+			bUserDataIsColorVertexBuffer	(If override vertex color)
+			+PrimitiveUniformBufferResource
+			+MinVertexIndex
+			+MaxVertexIndex
+			VisualizeElementIndex
+			+MaxScreenSize
+			+MinScreenSize
+	*/
+
 	bool bRenderWireframe = WireframeMaterial != nullptr;
 	bool bWantsAdjacency = !bRenderWireframe && RenderData.bWantsAdjacencyInfo;
 	   	  
 	Section->GetLOD(LODIndex)->CreateMeshBatch(MeshBatch, Section->CastsShadow(), bWantsAdjacency);
+	/* Sets :
+		MeshBatch:
+			MeshBatch.VertexFactory
+			MeshBatch.Type
+			MeshBatch.DepthPriorityGroup;
+			MeshBatch.CastShadow;
+		BatchElement :
+			BatchElement.IndexBuffer;
+			BatchElement.FirstIndex;
+			BatchElement.NumPrimitives;
+			BatchElement.MinVertexIndex;
+			BatchElement.MaxVertexIndex;
+	*/
+
+
+	FMeshBatchElement& BatchElement = MeshBatch.Elements[0];
 
 	MeshBatch.LODIndex = LODIndex;
-#if !(UE_BUILD_SHIPPING || UE_BUILD_TEXT)
+#if !((UE_BUILD_SHIPPING || UE_BUILD_TEST) || WITH_EDITOR)
 	MeshBatch.VisualizeLODIndex = LODIndex;
 #endif
 
@@ -96,7 +139,6 @@ void FRuntimeMeshComponentSceneProxy::CreateMeshBatch(FMeshBatch& MeshBatch, con
 	MeshBatch.ReverseCulling = IsLocalToWorldDeterminantNegative();
 	MeshBatch.bCanApplyViewModeOverrides = true;
 
-	FMeshBatchElement& BatchElement = MeshBatch.Elements[0];
 	BatchElement.PrimitiveUniformBufferResource = &GetUniformBuffer();
 
 	BatchElement.MaxScreenSize = RuntimeMeshProxy->GetScreenSize(LODIndex);

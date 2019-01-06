@@ -60,6 +60,7 @@ DECLARE_CYCLE_STAT(TEXT("RM - Serialize Data"), STAT_RuntimeMesh_SerializationOp
  */
 class RUNTIMEMESHCOMPONENT_API FRuntimeMeshData : public TSharedFromThis<FRuntimeMeshData, ESPMode::ThreadSafe>
 {
+
 	/** Array of sections of mesh */
 	TArray<FRuntimeMeshSectionPtr> MeshSections;
 
@@ -87,6 +88,7 @@ class RUNTIMEMESHCOMPONENT_API FRuntimeMeshData : public TSharedFromThis<FRuntim
 	TUniquePtr<FRuntimeMeshLockProvider> SyncRoot;
 	
 public:
+
 	FRuntimeMeshData();
 	~FRuntimeMeshData();
 
@@ -319,7 +321,7 @@ public:
 
 		Mesh->Commit();
 	}
-
+	/* TODO LOD support */
 	template<typename VertexType0, typename VertexType1, typename VertexType2, typename IndexType>
 	void CreateMeshSectionTripleBuffer(int32 SectionIndex, TArray<VertexType0>& InVertices0, TArray<VertexType1>& InVertices1, TArray<VertexType2>& InVertices2, TArray<IndexType>& InTriangles,
 		const FBox& BoundingBox, bool bCreateCollision = false, EUpdateFrequency UpdateFrequency = EUpdateFrequency::Average, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
@@ -1112,6 +1114,8 @@ private:
 	void SendSectionPropertiesUpdate(int32 SectionIndex);
 
 	int32 GetSectionFromCollisionFaceIndex(int32 FaceIndex) const;
+
+	int32 GetSectionAndFaceFromCollisionFaceIndex(int32 & FaceIndex) const;
 
 
 	void DoOnGameThread(FRuntimeMeshGameThreadTaskDelegate Func);

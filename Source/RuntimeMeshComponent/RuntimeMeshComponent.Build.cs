@@ -1,5 +1,6 @@
 // Copyright 2016-2018 Chris Conway (Koderz). All Rights Reserved.
 
+using System.IO;
 using UnrealBuildTool;
 
 public class RuntimeMeshComponent : ModuleRules
@@ -9,20 +10,8 @@ public class RuntimeMeshComponent : ModuleRules
         PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
         bFasterWithoutUnity = true;
 
-        PublicIncludePaths.AddRange(
-            new string[] {
-                "RuntimeMeshComponent/Public"
-				// ... add public include paths required here ...
-			}
-            );
-
-
-        PrivateIncludePaths.AddRange(
-            new string[] {
-                "RuntimeMeshComponent/Private",
-				// ... add other private include paths required here ...
-			}
-            );
+        PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "Public"));
+        PrivateIncludePaths.Add(Path.Combine(ModuleDirectory, "Private"));
 
 
         PublicDependencyModuleNames.AddRange(
