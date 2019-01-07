@@ -112,18 +112,18 @@ public:
 	 */
 	template<typename VertexType0, typename IndexType>
 	void SetMeshSection(int32 SectionIndex, TArray<VertexType0>& InVertices0, TArray<IndexType>& InTriangles, bool bCreateCollision = false,
-		EUpdateFrequency UpdateFrequency = EUpdateFrequency::Average, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
+		EUpdateFrequency UpdateFrequency = EUpdateFrequency::Average, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None, int32 LODIndex = 0)
 	{
 		if (GetOrCreateRuntimeMeshData()->DoesSectionExist(SectionIndex)) {
 			if (InVertices0.Num() == 0) {
 				ClearMeshSection(SectionIndex);
 			}
 			else {
-				UpdateMeshSection(SectionIndex, InVertices0, InTriangles, UpdateFlags);
+				UpdateMeshSection(SectionIndex, InVertices0, InTriangles, UpdateFlags, LODIndex);
 			}
 		}
 		else if (InVertices0.Num() != 0) {
-			CreateMeshSection(SectionIndex, InVertices0, InTriangles, bCreateCollision, UpdateFrequency, UpdateFlags);
+			CreateMeshSection(SectionIndex, InVertices0, InTriangles, bCreateCollision, UpdateFrequency, UpdateFlags, LODIndex);
 		}
 	}
 
@@ -156,19 +156,19 @@ public:
 	void SetMeshSection(int32 SectionIndex, const TArray<FVector>& Vertices, const TArray<int32>& Triangles, const TArray<FVector>& Normals,
 		const TArray<FVector2D>& UV0, const TArray<FColor>& Colors, const TArray<FRuntimeMeshTangent>& Tangents, bool bCreateCollision = false,
 		EUpdateFrequency UpdateFrequency = EUpdateFrequency::Average, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None,
-		bool bUseHighPrecisionTangents = false, bool bUseHighPrecisionUVs = true)
+		bool bUseHighPrecisionTangents = false, bool bUseHighPrecisionUVs = true, int32 LODIndex = 0)
 	{
 		if (GetOrCreateRuntimeMeshData()->DoesSectionExist(SectionIndex)) {
 			if (Vertices.Num() == 0) {
 				GetOrCreateRuntimeMeshData()->ClearMeshSection(SectionIndex);
 			}
 			else {
-				UpdateMeshSection(SectionIndex, Vertices, Triangles, Normals, UV0, Colors, Tangents, UpdateFlags);
+				UpdateMeshSection(SectionIndex, Vertices, Triangles, Normals, UV0, Colors, Tangents, UpdateFlags, LODIndex);
 			}
 		}
 		else if (Vertices.Num() != 0) {
 			CreateMeshSection(SectionIndex, Vertices, Triangles, Normals, UV0, Colors, Tangents, bCreateCollision,
-				UpdateFrequency, UpdateFlags, bUseHighPrecisionTangents, bUseHighPrecisionUVs);
+				UpdateFrequency, UpdateFlags, bUseHighPrecisionTangents, bUseHighPrecisionUVs, LODIndex);
 		}
 	}
 
@@ -228,44 +228,44 @@ public:
 
 	template<typename VertexType0, typename IndexType>
 	FORCEINLINE void CreateMeshSection(int32 SectionIndex, TArray<VertexType0>& InVertices0, TArray<IndexType>& InTriangles, bool bCreateCollision = false,
-		EUpdateFrequency UpdateFrequency = EUpdateFrequency::Average, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
+		EUpdateFrequency UpdateFrequency = EUpdateFrequency::Average, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None, int32 LODIndex = 0)
 	{
-		GetOrCreateRuntimeMesh()->CreateMeshSection(SectionIndex, InVertices0, InTriangles, bCreateCollision, UpdateFrequency, UpdateFlags);
+		GetOrCreateRuntimeMesh()->CreateMeshSection(SectionIndex, InVertices0, InTriangles, bCreateCollision, UpdateFrequency, UpdateFlags, LODIndex);
 	}
 
 	template<typename VertexType0, typename IndexType>
 	FORCEINLINE void CreateMeshSection(int32 SectionIndex, TArray<VertexType0>& InVertices0, TArray<IndexType>& InTriangles, const FBox& BoundingBox,
-		bool bCreateCollision = false, EUpdateFrequency UpdateFrequency = EUpdateFrequency::Average, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
+		bool bCreateCollision = false, EUpdateFrequency UpdateFrequency = EUpdateFrequency::Average, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None, int32 LODIndex = 0)
 	{
-		GetOrCreateRuntimeMesh()->CreateMeshSection(SectionIndex, InVertices0, InTriangles, BoundingBox, bCreateCollision, UpdateFrequency, UpdateFlags);
+		GetOrCreateRuntimeMesh()->CreateMeshSection(SectionIndex, InVertices0, InTriangles, BoundingBox, bCreateCollision, UpdateFrequency, UpdateFlags, LODIndex);
 	}
 
 	template<typename VertexType0, typename VertexType1, typename IndexType>
 	FORCEINLINE void CreateMeshSectionDualBuffer(int32 SectionIndex, TArray<VertexType0>& InVertices0, TArray<VertexType1>& InVertices1, TArray<IndexType>& InTriangles, bool bCreateCollision = false,
-		EUpdateFrequency UpdateFrequency = EUpdateFrequency::Average, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
+		EUpdateFrequency UpdateFrequency = EUpdateFrequency::Average, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None, int32 LODIndex = 0)
 	{
-		GetOrCreateRuntimeMesh()->CreateMeshSectionDualBuffer(SectionIndex, InVertices0, InVertices1, InTriangles, bCreateCollision, UpdateFrequency, UpdateFlags);
+		GetOrCreateRuntimeMesh()->CreateMeshSectionDualBuffer(SectionIndex, InVertices0, InVertices1, InTriangles, bCreateCollision, UpdateFrequency, UpdateFlags, LODIndex);
 	}
 
 	template<typename VertexType0, typename VertexType1, typename IndexType>
 	FORCEINLINE void CreateMeshSectionDualBuffer(int32 SectionIndex, TArray<VertexType0>& InVertices0, TArray<VertexType1>& InVertices1, TArray<IndexType>& InTriangles, const FBox& BoundingBox,
-		bool bCreateCollision = false, EUpdateFrequency UpdateFrequency = EUpdateFrequency::Average, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
+		bool bCreateCollision = false, EUpdateFrequency UpdateFrequency = EUpdateFrequency::Average, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None, int32 LODIndex = 0)
 	{
-		GetOrCreateRuntimeMesh()->CreateMeshSectionDualBuffer(SectionIndex, InVertices0, InVertices1, InTriangles, BoundingBox, bCreateCollision, UpdateFrequency, UpdateFlags);
+		GetOrCreateRuntimeMesh()->CreateMeshSectionDualBuffer(SectionIndex, InVertices0, InVertices1, InTriangles, BoundingBox, bCreateCollision, UpdateFrequency, UpdateFlags, LODIndex);
 	}
 
 	template<typename VertexType0, typename VertexType1, typename VertexType2, typename IndexType>
 	FORCEINLINE void CreateMeshSectionTripleBuffer(int32 SectionIndex, TArray<VertexType0>& InVertices0, TArray<VertexType1>& InVertices1, TArray<VertexType2>& InVertices2, TArray<IndexType>& InTriangles,
-		bool bCreateCollision = false, EUpdateFrequency UpdateFrequency = EUpdateFrequency::Average, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
+		bool bCreateCollision = false, EUpdateFrequency UpdateFrequency = EUpdateFrequency::Average, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None, int32 LODIndex = 0)
 	{
-		GetOrCreateRuntimeMesh()->CreateMeshSectionTripleBuffer(SectionIndex, InVertices0, InVertices1, InVertices2, InTriangles, bCreateCollision, UpdateFrequency, UpdateFlags);
+		GetOrCreateRuntimeMesh()->CreateMeshSectionTripleBuffer(SectionIndex, InVertices0, InVertices1, InVertices2, InTriangles, bCreateCollision, UpdateFrequency, UpdateFlags, LODIndex);
 	}
 
 	template<typename VertexType0, typename VertexType1, typename VertexType2, typename IndexType>
 	FORCEINLINE void CreateMeshSectionTripleBuffer(int32 SectionIndex, TArray<VertexType0>& InVertices0, TArray<VertexType1>& InVertices1, TArray<VertexType2>& InVertices2, TArray<IndexType>& InTriangles,
-		const FBox& BoundingBox, bool bCreateCollision = false, EUpdateFrequency UpdateFrequency = EUpdateFrequency::Average, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
+		const FBox& BoundingBox, bool bCreateCollision = false, EUpdateFrequency UpdateFrequency = EUpdateFrequency::Average, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None, int32 LODIndex = 0)
 	{
-		GetOrCreateRuntimeMesh()->CreateMeshSectionTripleBuffer(SectionIndex, InVertices0, InVertices1, InVertices2, InTriangles, BoundingBox, bCreateCollision, UpdateFrequency, UpdateFlags);
+		GetOrCreateRuntimeMesh()->CreateMeshSectionTripleBuffer(SectionIndex, InVertices0, InVertices1, InVertices2, InTriangles, BoundingBox, bCreateCollision, UpdateFrequency, UpdateFlags, LODIndex);
 	}
 
 
@@ -276,86 +276,86 @@ public:
 
 	template<typename VertexType0>
 	FORCEINLINE void UpdateMeshSection(int32 SectionId, TArray<VertexType0>& InVertices0,
-		ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
+		ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None, int32 LODIndex = 0)
 	{
-		GetOrCreateRuntimeMesh()->UpdateMeshSection(SectionId, InVertices0, UpdateFlags);
+		GetOrCreateRuntimeMesh()->UpdateMeshSection(SectionId, InVertices0, UpdateFlags, LODIndex);
 	}
 
 	template<typename VertexType0>
 	FORCEINLINE void UpdateMeshSection(int32 SectionId, TArray<VertexType0>& InVertices0,
-		const FBox& BoundingBox, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
+		const FBox& BoundingBox, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None, int32 LODIndex = 0)
 	{
-		GetOrCreateRuntimeMesh()->UpdateMeshSection(SectionId, InVertices0, BoundingBox, UpdateFlags);
+		GetOrCreateRuntimeMesh()->UpdateMeshSection(SectionId, InVertices0, BoundingBox, UpdateFlags, LODIndex);
 	}
 
 	template<typename VertexType0, typename IndexType>
 	FORCEINLINE void UpdateMeshSection(int32 SectionId, TArray<VertexType0>& InVertices0, TArray<IndexType>& InTriangles,
-		ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
+		ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None, int32 LODIndex = 0)
 	{
-		GetOrCreateRuntimeMesh()->UpdateMeshSection(SectionId, InVertices0, InTriangles, UpdateFlags);
+		GetOrCreateRuntimeMesh()->UpdateMeshSection(SectionId, InVertices0, InTriangles, UpdateFlags, LODIndex);
 	}
 
 	template<typename VertexType0, typename IndexType>
 	FORCEINLINE void UpdateMeshSection(int32 SectionId, TArray<VertexType0>& InVertices0, TArray<IndexType>& InTriangles,
-		const FBox& BoundingBox, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
+		const FBox& BoundingBox, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None, int32 LODIndex = 0)
 	{
-		GetOrCreateRuntimeMesh()->UpdateMeshSection(SectionId, InVertices0, InTriangles, BoundingBox, UpdateFlags);
+		GetOrCreateRuntimeMesh()->UpdateMeshSection(SectionId, InVertices0, InTriangles, BoundingBox, UpdateFlags, LODIndex);
 	}
 
 	template<typename VertexType0, typename VertexType1>
 	FORCEINLINE void UpdateMeshSectionDualBuffer(int32 SectionId, TArray<VertexType0>& InVertices0, TArray<VertexType1>& InVertices1,
-		ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
+		ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None, int32 LODIndex = 0)
 	{
-		GetOrCreateRuntimeMesh()->UpdateMeshSectionDualBuffer(SectionId, InVertices0, InVertices1, UpdateFlags);
+		GetOrCreateRuntimeMesh()->UpdateMeshSectionDualBuffer(SectionId, InVertices0, InVertices1, UpdateFlags, LODIndex);
 	}
 
 	template<typename VertexType0, typename VertexType1>
 	FORCEINLINE void UpdateMeshSectionDualBuffer(int32 SectionId, TArray<VertexType0>& InVertices0, TArray<VertexType1>& InVertices1,
-		const FBox& BoundingBox, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
+		const FBox& BoundingBox, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None, int32 LODIndex = 0)
 	{
-		GetOrCreateRuntimeMesh()->UpdateMeshSectionDualBuffer(SectionId, InVertices0, InVertices1, BoundingBox, UpdateFlags);
+		GetOrCreateRuntimeMesh()->UpdateMeshSectionDualBuffer(SectionId, InVertices0, InVertices1, BoundingBox, UpdateFlags, LODIndex);
 	}
 
 	template<typename VertexType0, typename VertexType1, typename IndexType>
 	FORCEINLINE void UpdateMeshSectionDualBuffer(int32 SectionId, TArray<VertexType0>& InVertices0, TArray<VertexType1>& InVertices1,
-		TArray<IndexType>& InTriangles, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
+		TArray<IndexType>& InTriangles, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None, int32 LODIndex = 0)
 	{
-		GetOrCreateRuntimeMesh()->UpdateMeshSectionDualBuffer(SectionId, InVertices0, InVertices1, InTriangles, UpdateFlags);
+		GetOrCreateRuntimeMesh()->UpdateMeshSectionDualBuffer(SectionId, InVertices0, InVertices1, InTriangles, UpdateFlags, LODIndex);
 	}
 
 	template<typename VertexType0, typename VertexType1, typename IndexType>
 	FORCEINLINE void UpdateMeshSectionDualBuffer(int32 SectionId, TArray<VertexType0>& InVertices0, TArray<VertexType1>& InVertices1, TArray<IndexType>& InTriangles,
-		const FBox& BoundingBox, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
+		const FBox& BoundingBox, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None, int32 LODIndex = 0)
 	{
-		GetOrCreateRuntimeMesh()->UpdateMeshSectionDualBuffer(SectionId, InVertices0, InVertices1, InTriangles, BoundingBox, UpdateFlags);
+		GetOrCreateRuntimeMesh()->UpdateMeshSectionDualBuffer(SectionId, InVertices0, InVertices1, InTriangles, BoundingBox, UpdateFlags, LODIndex);
 	}
 
 	template<typename VertexType0, typename VertexType1, typename VertexType2>
 	FORCEINLINE void UpdateMeshSectionTripleBuffer(int32 SectionId, TArray<VertexType0>& InVertices0, TArray<VertexType1>& InVertices1, TArray<VertexType2>& InVertices2,
-		ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
+		ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None, int32 LODIndex = 0)
 	{
-		GetOrCreateRuntimeMesh()->UpdateMeshSectionTripleBuffer(SectionId, InVertices0, InVertices1, InVertices2, UpdateFlags);
+		GetOrCreateRuntimeMesh()->UpdateMeshSectionTripleBuffer(SectionId, InVertices0, InVertices1, InVertices2, UpdateFlags, LODIndex);
 	}
 
 	template<typename VertexType0, typename VertexType1, typename VertexType2>
 	FORCEINLINE void UpdateMeshSectionTripleBuffer(int32 SectionId, TArray<VertexType0>& InVertices0, TArray<VertexType1>& InVertices1, TArray<VertexType2>& InVertices2,
-		const FBox& BoundingBox, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
+		const FBox& BoundingBox, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None, int32 LODIndex = 0)
 	{
-		GetOrCreateRuntimeMesh()->UpdateMeshSectionTripleBuffer(SectionId, InVertices0, InVertices1, InVertices2, BoundingBox, UpdateFlags);
+		GetOrCreateRuntimeMesh()->UpdateMeshSectionTripleBuffer(SectionId, InVertices0, InVertices1, InVertices2, BoundingBox, UpdateFlags, LODIndex);
 	}
 
 	template<typename VertexType0, typename VertexType1, typename VertexType2, typename IndexType>
 	FORCEINLINE void UpdateMeshSectionTripleBuffer(int32 SectionId, TArray<VertexType0>& InVertices0, TArray<VertexType1>& InVertices1, TArray<VertexType2>& InVertices2,
-		TArray<IndexType>& InTriangles, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
+		TArray<IndexType>& InTriangles, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None, int32 LODIndex = 0)
 	{
-		GetOrCreateRuntimeMesh()->UpdateMeshSectionTripleBuffer(SectionId, InVertices0, InVertices1, InVertices2, InTriangles, UpdateFlags);
+		GetOrCreateRuntimeMesh()->UpdateMeshSectionTripleBuffer(SectionId, InVertices0, InVertices1, InVertices2, InTriangles, UpdateFlags, LODIndex);
 	}
 
 	template<typename VertexType0, typename VertexType1, typename VertexType2, typename IndexType>
 	FORCEINLINE void UpdateMeshSectionTripleBuffer(int32 SectionId, TArray<VertexType0>& InVertices0, TArray<VertexType1>& InVertices1, TArray<VertexType2>& InVertices2,
-		TArray<IndexType>& InTriangles, const FBox& BoundingBox, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
+		TArray<IndexType>& InTriangles, const FBox& BoundingBox, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None, int32 LODIndex = 0)
 	{
-		GetOrCreateRuntimeMesh()->UpdateMeshSectionTripleBuffer(SectionId, InVertices0, InVertices1, InVertices2, InTriangles, BoundingBox, UpdateFlags);
+		GetOrCreateRuntimeMesh()->UpdateMeshSectionTripleBuffer(SectionId, InVertices0, InVertices1, InVertices2, InTriangles, BoundingBox, UpdateFlags, LODIndex);
 	}
 
 
@@ -366,7 +366,7 @@ public:
 	DEPRECATED(3.0, "UpdateMeshSection for dual buffer sections deprecated. Please use UpdateMeshSectionDualBuffer instead.")
 	void UpdateMeshSection(int32 SectionIndex, TArray<FVector>& VertexPositions, TArray<VertexType>& VertexData, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
 	{
-		UpdateMeshSectionDualBuffer(SectionIndex, VertexPositions, VertexData, UpdateFlags);
+		UpdateMeshSectionDualBuffer(SectionIndex, VertexPositions, VertexData, UpdateFlags, LODIndex);
 	}
 
 	/** DEPRECATED! Use UpdateMeshSectionDualBuffer() instead.  Updates the dual buffer mesh section */
@@ -374,7 +374,7 @@ public:
 	DEPRECATED(3.0, "UpdateMeshSection for dual buffer sections deprecated. Please use UpdateMeshSectionDualBuffer instead.")
 	void UpdateMeshSection(int32 SectionIndex, TArray<FVector>& VertexPositions, TArray<VertexType>& VertexData, const FBox& BoundingBox, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
 	{
-		UpdateMeshSectionDualBuffer(SectionIndex, VertexPositions, VertexData, BoundingBox, UpdateFlags);
+		UpdateMeshSectionDualBuffer(SectionIndex, VertexPositions, VertexData, BoundingBox, UpdateFlags, LODIndex);
 	}
 
 	/** DEPRECATED! Use UpdateMeshSectionDualBuffer() instead.  Updates the dual buffer mesh section */
@@ -382,7 +382,7 @@ public:
 	DEPRECATED(3.0, "UpdateMeshSection for dual buffer sections deprecated. Please use UpdateMeshSectionDualBuffer instead.")
 	void UpdateMeshSection(int32 SectionIndex, TArray<FVector>& VertexPositions, TArray<VertexType>& VertexData, TArray<int32>& Triangles, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
 	{
-		UpdateMeshSectionDualBuffer(SectionIndex, VertexPositions, VertexData, Triangles, UpdateFlags);
+		UpdateMeshSectionDualBuffer(SectionIndex, VertexPositions, VertexData, Triangles, UpdateFlags, LODIndex);
 	}
 
 	/** DEPRECATED! Use UpdateMeshSectionDualBuffer() instead.  Updates the dual buffer mesh section */
@@ -390,7 +390,7 @@ public:
 	DEPRECATED(3.0, "UpdateMeshSection for dual buffer sections deprecated. Please use UpdateMeshSectionDualBuffer instead.")
 	void UpdateMeshSection(int32 SectionIndex, TArray<FVector>& VertexPositions, TArray<VertexType>& VertexData, TArray<int32>& Triangles, const FBox& BoundingBox, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
 	{
-		UpdateMeshSectionDualBuffer(SectionIndex, VertexPositions, VertexData, Triangles, BoundingBox, UpdateFlags);
+		UpdateMeshSectionDualBuffer(SectionIndex, VertexPositions, VertexData, Triangles, BoundingBox, UpdateFlags, LODIndex);
 	}
 
 
@@ -398,33 +398,33 @@ public:
 
 
 	template<typename VertexType0>
-	FORCEINLINE void UpdateMeshSectionPrimaryBuffer(int32 SectionId, TArray<VertexType0>& InVertices0, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
+	FORCEINLINE void UpdateMeshSectionPrimaryBuffer(int32 SectionId, TArray<VertexType0>& InVertices0, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None, int32 LODIndex = 0)
 	{
-		GetOrCreateRuntimeMesh()->UpdateMeshSectionPrimaryBuffer(SectionId, InVertices0, UpdateFlags);
+		GetOrCreateRuntimeMesh()->UpdateMeshSectionPrimaryBuffer(SectionId, InVertices0, UpdateFlags, LODIndex);
 	}
 
 	template<typename VertexType0>
-	FORCEINLINE void UpdateMeshSectionPrimaryBuffer(int32 SectionId, TArray<VertexType0>& InVertices0, const FBox& BoundingBox, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
+	FORCEINLINE void UpdateMeshSectionPrimaryBuffer(int32 SectionId, TArray<VertexType0>& InVertices0, const FBox& BoundingBox, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None, int32 LODIndex = 0)
 	{
-		GetOrCreateRuntimeMesh()->UpdateMeshSectionPrimaryBuffer(SectionId, InVertices0, BoundingBox, UpdateFlags);
+		GetOrCreateRuntimeMesh()->UpdateMeshSectionPrimaryBuffer(SectionId, InVertices0, BoundingBox, UpdateFlags, LODIndex);
 	}
 
 	template<typename VertexType1>
-	FORCEINLINE void UpdateMeshSectionSecondaryBuffer(int32 SectionId, TArray<VertexType1>& InVertices1, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
+	FORCEINLINE void UpdateMeshSectionSecondaryBuffer(int32 SectionId, TArray<VertexType1>& InVertices1, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None, int32 LODIndex = 0)
 	{
-		GetOrCreateRuntimeMesh()->UpdateMeshSectionSecondaryBuffer(SectionId, InVertices1, UpdateFlags);
+		GetOrCreateRuntimeMesh()->UpdateMeshSectionSecondaryBuffer(SectionId, InVertices1, UpdateFlags, LODIndex);
 	}
 
 	template<typename VertexType2>
-	FORCEINLINE void UpdateMeshSectionTertiaryBuffer(int32 SectionId, TArray<VertexType2>& InVertices2, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
+	FORCEINLINE void UpdateMeshSectionTertiaryBuffer(int32 SectionId, TArray<VertexType2>& InVertices2, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None, int32 LODIndex = 0)
 	{
-		GetOrCreateRuntimeMesh()->UpdateMeshSectionTertiaryBuffer(SectionId, InVertices2, UpdateFlags);
+		GetOrCreateRuntimeMesh()->UpdateMeshSectionTertiaryBuffer(SectionId, InVertices2, UpdateFlags, LODIndex);
 	}
 
 	template<typename IndexType>
-	FORCEINLINE void UpdateMeshSectionTriangles(int32 SectionId, TArray<IndexType>& InTriangles, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
+	FORCEINLINE void UpdateMeshSectionTriangles(int32 SectionId, TArray<IndexType>& InTriangles, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None, int32 LODIndex = 0)
 	{
-		GetOrCreateRuntimeMesh()->UpdateMeshSectionTriangles(SectionId, InTriangles, UpdateFlags);
+		GetOrCreateRuntimeMesh()->UpdateMeshSectionTriangles(SectionId, InTriangles, UpdateFlags, LODIndex);
 	}
 
 
@@ -484,44 +484,44 @@ public:
 	FORCEINLINE void CreateMeshSection(int32 SectionIndex, const TArray<FVector>& Vertices, const TArray<int32>& Triangles, const TArray<FVector>& Normals,
 	const TArray<FVector2D>& UV0, const TArray<FColor>& Colors, const TArray<FRuntimeMeshTangent>& Tangents, bool bCreateCollision = false,
 		EUpdateFrequency UpdateFrequency = EUpdateFrequency::Average, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None,
-		bool bUseHighPrecisionTangents = false, bool bUseHighPrecisionUVs = true)
+		bool bUseHighPrecisionTangents = false, bool bUseHighPrecisionUVs = true, int32 LODIndex = 0)
 	{
 		GetOrCreateRuntimeMesh()->CreateMeshSection(SectionIndex, Vertices, Triangles, Normals, UV0, Colors, Tangents, bCreateCollision,
-			UpdateFrequency, UpdateFlags, bUseHighPrecisionTangents, bUseHighPrecisionUVs);
+			UpdateFrequency, UpdateFlags, bUseHighPrecisionTangents, bUseHighPrecisionUVs, LODIndex);
 	}
 
 	FORCEINLINE void CreateMeshSection(int32 SectionIndex, const TArray<FVector>& Vertices, const TArray<int32>& Triangles, const TArray<FVector>& Normals,
 	const TArray<FVector2D>& UV0, const TArray<FVector2D>& UV1, const TArray<FColor>& Colors, const TArray<FRuntimeMeshTangent>& Tangents,
 		bool bCreateCollision = false, EUpdateFrequency UpdateFrequency = EUpdateFrequency::Average, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None,
-		bool bUseHighPrecisionTangents = false, bool bUseHighPrecisionUVs = true)
+		bool bUseHighPrecisionTangents = false, bool bUseHighPrecisionUVs = true, int32 LODIndex = 0)
 	{
 		GetOrCreateRuntimeMesh()->CreateMeshSection(SectionIndex, Vertices, Triangles, Normals, UV0, UV1, Colors, Tangents, bCreateCollision,
-			UpdateFrequency, UpdateFlags, bUseHighPrecisionTangents, bUseHighPrecisionUVs);
+			UpdateFrequency, UpdateFlags, bUseHighPrecisionTangents, bUseHighPrecisionUVs, LODIndex);
 	}
 
 
 	FORCEINLINE void UpdateMeshSection(int32 SectionIndex, const TArray<FVector>& Vertices, const TArray<FVector>& Normals, const TArray<FVector2D>& UV0,
-	const TArray<FColor>& Colors, const TArray<FRuntimeMeshTangent>& Tangents, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
+	const TArray<FColor>& Colors, const TArray<FRuntimeMeshTangent>& Tangents, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None, int32 LODIndex = 0)
 	{
-		GetOrCreateRuntimeMesh()->UpdateMeshSection(SectionIndex, Vertices, Normals, UV0, Colors, Tangents, UpdateFlags);
+		GetOrCreateRuntimeMesh()->UpdateMeshSection(SectionIndex, Vertices, Normals, UV0, Colors, Tangents, UpdateFlags, LODIndex);
 	}
 
 	FORCEINLINE void UpdateMeshSection(int32 SectionIndex, const TArray<FVector>& Vertices, const TArray<FVector>& Normals, const TArray<FVector2D>& UV0,
-	const TArray<FVector2D>& UV1, const TArray<FColor>& Colors, const TArray<FRuntimeMeshTangent>& Tangents, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
+	const TArray<FVector2D>& UV1, const TArray<FColor>& Colors, const TArray<FRuntimeMeshTangent>& Tangents, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None, int32 LODIndex = 0)
 	{
-		GetOrCreateRuntimeMesh()->UpdateMeshSection(SectionIndex, Vertices, Normals, UV0, UV1, Colors, Tangents, UpdateFlags);
+		GetOrCreateRuntimeMesh()->UpdateMeshSection(SectionIndex, Vertices, Normals, UV0, UV1, Colors, Tangents, UpdateFlags, LODIndex);
 	}
 
 	FORCEINLINE void UpdateMeshSection(int32 SectionIndex, const TArray<FVector>& Vertices, const TArray<int32>& Triangles, const TArray<FVector>& Normals,
-		const TArray<FVector2D>& UV0, const TArray<FColor>& Colors, const TArray<FRuntimeMeshTangent>& Tangents, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
+		const TArray<FVector2D>& UV0, const TArray<FColor>& Colors, const TArray<FRuntimeMeshTangent>& Tangents, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None, int32 LODIndex = 0)
 	{
-		GetOrCreateRuntimeMesh()->UpdateMeshSection(SectionIndex, Vertices, Triangles, Normals, UV0, Colors, Tangents, UpdateFlags);
+		GetOrCreateRuntimeMesh()->UpdateMeshSection(SectionIndex, Vertices, Triangles, Normals, UV0, Colors, Tangents, UpdateFlags, LODIndex);
 	}
 
 	FORCEINLINE void UpdateMeshSection(int32 SectionIndex, const TArray<FVector>& Vertices, const TArray<int32>& Triangles, const TArray<FVector>& Normals,
-	const TArray<FVector2D>& UV0, const TArray<FVector2D>& UV1, const TArray<FColor>& Colors, const TArray<FRuntimeMeshTangent>& Tangents, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
+	const TArray<FVector2D>& UV0, const TArray<FVector2D>& UV1, const TArray<FColor>& Colors, const TArray<FRuntimeMeshTangent>& Tangents, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None, int32 LODIndex = 0)
 	{
-		GetOrCreateRuntimeMesh()->UpdateMeshSection(SectionIndex, Vertices, Triangles, Normals, UV0, UV1, Colors, Tangents, UpdateFlags);
+		GetOrCreateRuntimeMesh()->UpdateMeshSection(SectionIndex, Vertices, Triangles, Normals, UV0, UV1, Colors, Tangents, UpdateFlags, LODIndex);
 	}
 
 
