@@ -111,20 +111,24 @@ public:
 	 * Will automatically delete the section if there are no vertices given
 	 */
 	template<typename VertexType0, typename IndexType>
-	void SetMeshSection(int32 SectionIndex, TArray<VertexType0>& InVertices0, TArray<IndexType>& InTriangles, bool bCreateCollision = false,
+	ERuntimeMeshSetAction SetMeshSection(int32 SectionIndex, TArray<VertexType0>& InVertices0, TArray<IndexType>& InTriangles, bool bCreateCollision = false,
 		EUpdateFrequency UpdateFrequency = EUpdateFrequency::Average, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None, int32 LODIndex = 0)
 	{
 		if (GetOrCreateRuntimeMeshData()->DoesSectionExist(SectionIndex)) {
 			if (InVertices0.Num() == 0) {
 				ClearMeshSection(SectionIndex);
+				return ERuntimeMeshSetAction::Remove;
 			}
 			else {
 				UpdateMeshSection(SectionIndex, InVertices0, InTriangles, UpdateFlags, LODIndex);
+				return ERuntimeMeshSetAction::Update;
 			}
 		}
 		else if (InVertices0.Num() != 0) {
 			CreateMeshSection(SectionIndex, InVertices0, InTriangles, bCreateCollision, UpdateFrequency, UpdateFlags, LODIndex);
+			return ERuntimeMeshSetAction::Create;
 		}
+		return ERuntimeMeshSetAction::None;
 	}
 
 	/*
@@ -132,20 +136,24 @@ public:
 	 * Otherwise update the section.
 	 * Will automatically delete the section if there are no vertices given
 	 */
-	void SetMeshSection(int32 SectionId, const TSharedPtr<FRuntimeMeshBuilder>& MeshData, bool bCreateCollision = false,
+	ERuntimeMeshSetAction SetMeshSection(int32 SectionId, const TSharedPtr<FRuntimeMeshBuilder>& MeshData, bool bCreateCollision = false,
 		EUpdateFrequency UpdateFrequency = EUpdateFrequency::Average, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None)
 	{
 		if (GetOrCreateRuntimeMeshData()->DoesSectionExist(SectionId)) {
 			if (MeshData->NumIndices() == 0) {
 				GetOrCreateRuntimeMeshData()->ClearMeshSection(SectionId);
+				return ERuntimeMeshSetAction::Remove;
 			}
 			else {
 				GetOrCreateRuntimeMeshData()->UpdateMeshSection(SectionId, MeshData, UpdateFlags);
+				return ERuntimeMeshSetAction::Update;
 			}
 		}
 		else if (MeshData->NumIndices() != 0) {
 			GetOrCreateRuntimeMeshData()->CreateMeshSection(SectionId, MeshData, bCreateCollision, UpdateFrequency, UpdateFlags);
+			return ERuntimeMeshSetAction::Create;
 		}
+		return ERuntimeMeshSetAction::None;
 	}
 
 	/*
@@ -153,7 +161,7 @@ public:
 	 * Otherwise update the section.
 	 * Will automatically delete the section if there are no vertices given
 	 */
-	void SetMeshSection(int32 SectionIndex, const TArray<FVector>& Vertices, const TArray<int32>& Triangles, const TArray<FVector>& Normals,
+	ERuntimeMeshSetAction SetMeshSection(int32 SectionIndex, const TArray<FVector>& Vertices, const TArray<int32>& Triangles, const TArray<FVector>& Normals,
 		const TArray<FVector2D>& UV0, const TArray<FColor>& Colors, const TArray<FRuntimeMeshTangent>& Tangents, bool bCreateCollision = false,
 		EUpdateFrequency UpdateFrequency = EUpdateFrequency::Average, ESectionUpdateFlags UpdateFlags = ESectionUpdateFlags::None,
 		bool bUseHighPrecisionTangents = false, bool bUseHighPrecisionUVs = true, int32 LODIndex = 0)
@@ -161,15 +169,19 @@ public:
 		if (GetOrCreateRuntimeMeshData()->DoesSectionExist(SectionIndex)) {
 			if (Vertices.Num() == 0) {
 				GetOrCreateRuntimeMeshData()->ClearMeshSection(SectionIndex);
+				return ERuntimeMeshSetAction::Remove;
 			}
 			else {
 				UpdateMeshSection(SectionIndex, Vertices, Triangles, Normals, UV0, Colors, Tangents, UpdateFlags, LODIndex);
+				return ERuntimeMeshSetAction::Update;
 			}
 		}
 		else if (Vertices.Num() != 0) {
 			CreateMeshSection(SectionIndex, Vertices, Triangles, Normals, UV0, Colors, Tangents, bCreateCollision,
 				UpdateFrequency, UpdateFlags, bUseHighPrecisionTangents, bUseHighPrecisionUVs, LODIndex);
+			return ERuntimeMeshSetAction::Create;
 		}
+		return ERuntimeMeshSetAction::None;
 	}
 
 	/*
@@ -178,7 +190,7 @@ public:
 	 * Will automatically delete the section if there are no vertices given
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Components|RuntimeMesh", meta = (DisplayName = "Set Mesh Section", AutoCreateRefTerm = "Normals,Tangents,UV0,UV1,Colors"))
-		void SetMeshSection_Blueprint(int32 SectionIndex, const TArray<FVector>& Vertices, const TArray<int32>& Triangles, const TArray<FVector>& Normals,
+		ERuntimeMeshSetAction SetMeshSection_Blueprint(int32 SectionIndex, const TArray<FVector>& Vertices, const TArray<int32>& Triangles, const TArray<FVector>& Normals,
 			const TArray<FRuntimeMeshTangent>& Tangents, const TArray<FVector2D>& UV0, const TArray<FVector2D>& UV1, const TArray<FLinearColor>& Colors, int32 LODIndex = 0,
 			bool bCreateCollision = false, bool bCalculateNormalTangent = false, bool bShouldCreateHardTangents = false, bool bGenerateTessellationTriangles = false,
 			EUpdateFrequency UpdateFrequency = EUpdateFrequency::Average, bool bUseHighPrecisionTangents = false, bool bUseHighPrecisionUVs = true)
@@ -186,16 +198,20 @@ public:
 		if (DoesSectionExist(SectionIndex)) {
 			if (Vertices.Num() == 0) {
 				ClearMeshSection(SectionIndex);
+				return ERuntimeMeshSetAction::Remove;
 			}
 			else {
 				UpdateMeshSection_Blueprint(SectionIndex, Vertices, Triangles, Normals, Tangents, UV0, UV1, Colors,
 					bCalculateNormalTangent, bShouldCreateHardTangents, bGenerateTessellationTriangles, LODIndex);
+				return ERuntimeMeshSetAction::Update;
 			}
 		}
 		else if (Vertices.Num() != 0) {
 			CreateMeshSection_Blueprint(SectionIndex, Vertices, Triangles, Normals, Tangents, UV0, UV1, Colors, bCreateCollision,
 				bCalculateNormalTangent, bShouldCreateHardTangents, bGenerateTessellationTriangles, UpdateFrequency, bUseHighPrecisionTangents, bUseHighPrecisionUVs, LODIndex);
+			return ERuntimeMeshSetAction::Create;
 		}
+		return ERuntimeMeshSetAction::None;
 	}
 
 	/*
@@ -204,23 +220,27 @@ public:
 	 * Will automatically delete the section if there are no vertices given
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Components|RuntimeMesh", meta = (DisplayName = "Set Mesh Section Packed", AutoCreateRefTerm = "Normals,Tangents,UV0,UV1,Colors"))
-		void SetMeshSectionPacked_Blueprint(int32 SectionIndex, const TArray<FRuntimeMeshBlueprintVertexSimple>& Vertices, const TArray<int32>& Triangles, int32 LODIndex = 0,
+		ERuntimeMeshSetAction SetMeshSectionPacked_Blueprint(int32 SectionIndex, const TArray<FRuntimeMeshBlueprintVertexSimple>& Vertices, const TArray<int32>& Triangles, int32 LODIndex = 0,
 			bool bCreateCollision = false, bool bCalculateNormalTangent = false, bool bShouldCreateHardTangents = false, bool bGenerateTessellationTriangles = false, EUpdateFrequency UpdateFrequency = EUpdateFrequency::Average,
 			bool bUseHighPrecisionTangents = false, bool bUseHighPrecisionUVs = true)
 	{
 		if (DoesSectionExist(SectionIndex)) {
 			if (Vertices.Num() == 0) {
 				ClearMeshSection(SectionIndex);
+				return ERuntimeMeshSetAction::Remove;
 			}
 			else {
 				UpdateMeshSectionPacked_Blueprint(SectionIndex, Vertices, Triangles, bCalculateNormalTangent, bShouldCreateHardTangents,
 					bGenerateTessellationTriangles, LODIndex);
+				return ERuntimeMeshSetAction::Update;
 			}
 		}
 		else if (Vertices.Num() != 0) {
 			CreateMeshSectionPacked_Blueprint(SectionIndex, Vertices, Triangles, bCreateCollision, bCalculateNormalTangent, bShouldCreateHardTangents,
 				bGenerateTessellationTriangles, UpdateFrequency, bUseHighPrecisionTangents, bUseHighPrecisionUVs, LODIndex);
+			return ERuntimeMeshSetAction::Create;
 		}
+		return ERuntimeMeshSetAction::None;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

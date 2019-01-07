@@ -10,6 +10,7 @@ FRuntimeMeshComponentSceneProxy::FRuntimeMeshComponentSceneProxy(URuntimeMeshCom
 	: FPrimitiveSceneProxy(Component)
 	, BodySetup(Component->GetBodySetup())
 {
+	//UE_LOG(RuntimeMeshLog, Log, TEXT("[FRuntimeMeshComponentSceneProxy] Creating Scene Proxy"));
 	bStaticElementsAlwaysUseProxyPrimitiveUniformBuffer = true;
 
 	check(Component->GetRuntimeMesh() != nullptr);
@@ -76,6 +77,8 @@ FPrimitiveViewRelevance FRuntimeMeshComponentSceneProxy::GetViewRelevance(const 
 
 void FRuntimeMeshComponentSceneProxy::CreateMeshBatch(FMeshBatch& MeshBatch, const FRuntimeMeshSectionProxyPtr& Section, int32 LODIndex, const FRuntimeMeshSectionRenderData& RenderData, FMaterialRenderProxy* Material, FMaterialRenderProxy* WireframeMaterial) const
 {
+	//UE_LOG(RuntimeMeshLog, Log, TEXT("[FRuntimeMeshComponentSceneProxy] Creating mesh bath at LOD %d"), LODIndex);
+
 	/* Needs to be set :
 		bWireframe
 		bRequiresAdjacencyInformation
@@ -149,6 +152,7 @@ void FRuntimeMeshComponentSceneProxy::CreateMeshBatch(FMeshBatch& MeshBatch, con
 
 void FRuntimeMeshComponentSceneProxy::DrawStaticElements(FStaticPrimitiveDrawInterface* PDI)
 {
+	//UE_LOG(RuntimeMeshLog, Log, TEXT("[FRuntimeMeshComponentSceneProxy] Drawing static elements"));
 	for (const auto& SectionEntry : RuntimeMeshProxy->GetSections())
 	{
 		FRuntimeMeshSectionProxyPtr Section = SectionEntry.Value;
@@ -174,7 +178,6 @@ void FRuntimeMeshComponentSceneProxy::DrawStaticElements(FStaticPrimitiveDrawInt
 
 int32 FRuntimeMeshComponentSceneProxy::GetLOD(const FSceneView * View) const
 {
-	//return 1;
 	const FBoxSphereBounds& ProxyBounds = GetBounds();
 	FVector4 Origin = ProxyBounds.Origin;
 	float SphereRadius = ProxyBounds.SphereRadius, FactorScale = 1.0f;
@@ -182,11 +185,13 @@ int32 FRuntimeMeshComponentSceneProxy::GetLOD(const FSceneView * View) const
 	const int32 NumLODs = RUNTIMEMESH_MAXLODS;
 	const FSceneView& LODView = GetLODView(*View);
 	const float ScreenRadiusSquared = ComputeBoundsScreenRadiusSquared(Origin, SphereRadius, LODView) * FactorScale * FactorScale * LODView.LODDistanceFactor * LODView.LODDistanceFactor;
+	//UE_LOG(LogTemp, Log, TEXT("Screen radius : %f"), ScreenRadiusSquared);
 	// Walk backwards and return the first matching LOD
 	for (int32 LODIndex = NumLODs - 1; LODIndex >= 0; --LODIndex)
 	{
-		if (FMath::Square(RuntimeMeshProxy->GetScreenSize(LODIndex) /* * 0.5f*/) > ScreenRadiusSquared)
+		if (FMath::Square(RuntimeMeshProxy->GetScreenSize(LODIndex) * 0.5f) > ScreenRadiusSquared)
 		{
+			//UE_LOG(LogTemp, Log, TEXT("Using LOD %d"), LODIndex);
 			return FMath::Max(LODIndex, MinLOD);
 		}
 	}
@@ -195,6 +200,8 @@ int32 FRuntimeMeshComponentSceneProxy::GetLOD(const FSceneView * View) const
 
 void FRuntimeMeshComponentSceneProxy::GetDynamicMeshElements(const TArray<const FSceneView*>& Views, const FSceneViewFamily& ViewFamily, uint32 VisibilityMap, FMeshElementCollector& Collector) const
 {
+	//UE_LOG(RuntimeMeshLog, Log, TEXT("[FRuntimeMeshComponentSceneProxy] Getting dynamic mesh elements"));
+
 	// Set up wireframe material (if needed)
 	const bool bWireframe = AllowDebugViewmodes() && ViewFamily.EngineShowFlags.Wireframe;
 

@@ -1567,7 +1567,12 @@ int32 FRuntimeMeshData::GetSectionAndFaceFromCollisionFaceIndex(int32& FaceIndex
 
 		if (Section.IsValid() && Section->IsCollisionEnabled())
 		{
-			int32 NumFaces = Section->GetNumIndices(LODForCollision) / 3;
+			if (Section->GetNumLODs() == 0) {
+				continue;
+			}
+			int32 NumFaces = Section->GetNumIndices(
+				FMath::Min(LODForCollision, Section->GetNumLODs()-1)
+			) / 3;
 
 			if (FaceIndex < TotalFaceCount + NumFaces)
 			{

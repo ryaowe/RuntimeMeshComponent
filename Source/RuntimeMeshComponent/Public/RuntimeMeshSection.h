@@ -423,6 +423,10 @@ public:
 		check(LODs.IsValidIndex(LODIndex));
 		return LODs[LODIndex].IndexBuffer.GetNumIndices();
 	}
+	int32 GetNumLODs() const
+	{
+		return LODs.Num();
+	}
 
 	bool HasValidMeshData() const 
 	{
