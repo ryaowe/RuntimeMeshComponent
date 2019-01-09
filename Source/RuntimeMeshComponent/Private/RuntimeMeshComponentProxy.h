@@ -51,10 +51,19 @@ public:
 
 	/* Equivalent of FStaticMeshSceneProxy::GetMeshElement */
 	void CreateMeshBatch(FMeshBatch& MeshBatch, const FRuntimeMeshSectionProxyPtr& Section, int32 LODIndex, const FRuntimeMeshSectionRenderData& RenderData, FMaterialRenderProxy* Material, FMaterialRenderProxy* WireframeMaterial) const;
-
+	
+	/**
+	 * Draws the primitive's static elements.  This is called from the rendering thread once when the scene proxy is created.
+	 * The static elements will only be rendered if GetViewRelevance declares static relevance.
+	 * @param PDI - The interface which receives the primitive elements.
+	 */
 	virtual void DrawStaticElements(FStaticPrimitiveDrawInterface* PDI) override;
 
+	/** Returns the LOD that the primitive will render at for this view. */
 	virtual int32 GetLOD(const FSceneView* View) const override;
+
+	/** Gathers a description of the mesh elements to be rendered for the given LOD index, without consideration for views. */
+	virtual void GetMeshDescription(int32 LODIndex, TArray<FMeshBatch>& OutMeshElements) const override;
 
 	/* This is called by the engine to extract the mesh data that was stored inside */
 	virtual void GetDynamicMeshElements(const TArray<const FSceneView*>& Views, const FSceneViewFamily& ViewFamily, uint32 VisibilityMap, FMeshElementCollector& Collector) const override;

@@ -198,6 +198,28 @@ int32 FRuntimeMeshComponentSceneProxy::GetLOD(const FSceneView * View) const
 	return MinLOD;
 }
 
+void FRuntimeMeshComponentSceneProxy::GetMeshDescription(int32 LODIndex, TArray<FMeshBatch>& OutMeshElements) const
+{
+
+	for (const auto& SectionEntry : RuntimeMeshProxy->GetSections())
+	{
+		FRuntimeMeshSectionProxyPtr Section = SectionEntry.Value;
+		if (SectionRenderData.Contains(SectionEntry.Key) && Section.IsValid())
+		{
+			auto* SectionLOD = Section->GetLOD(LODIndex);
+			if (SectionLOD->CanRender())
+			{
+				const FRuntimeMeshSectionRenderData& RenderData = SectionRenderData[SectionEntry.Key];
+				FMaterialRenderProxy* Material = RenderData.Material->GetRenderProxy(false);
+
+				FMeshBatch MeshBatch;
+				CreateMeshBatch(MeshBatch, Section, LODIndex, RenderData, Material, nullptr);
+				OutMeshElements.Add(MeshBatch);
+			}
+		}
+	}
+}
+
 void FRuntimeMeshComponentSceneProxy::GetDynamicMeshElements(const TArray<const FSceneView*>& Views, const FSceneViewFamily& ViewFamily, uint32 VisibilityMap, FMeshElementCollector& Collector) const
 {
 	//UE_LOG(RuntimeMeshLog, Log, TEXT("[FRuntimeMeshComponentSceneProxy] Getting dynamic mesh elements"));
